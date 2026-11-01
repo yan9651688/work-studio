@@ -12,7 +12,8 @@
     "test": "vitest run",
     "test:e2e": "playwright test",
     "db:migrate": "pnpm --filter @studio/server db:migrate",
-    "db:seed": "pnpm --filter @studio/server db:seed"
+    "db:seed": "pnpm --filter @studio/server db:seed",
+    "db:showcase": "pnpm --filter @studio/server db:showcase"
   },
   "devDependencies": {
     "@eslint/js": "^9.39.0",

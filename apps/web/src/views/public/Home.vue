@@ -97,24 +97,34 @@ function create(text = prompt.value) {
           </h2>
           <p>挑一个喜欢的方向，带着描述开始创作。</p>
         </div>
-        <button class="text-link" @click="expanded = !expanded">
+        <button
+          v-if="showcase.inspiration.length > 6"
+          class="text-link"
+          @click="expanded = !expanded"
+        >
           {{ expanded ? '收起' : '查看全部' }}
           <AppIcon name="arrow" :size="15" />
         </button>
       </div>
       <div class="inspiration-grid">
         <button
-          v-for="item in expanded ? showcase.inspiration : showcase.inspiration.slice(0, 3)"
+          v-for="item in expanded ? showcase.inspiration : showcase.inspiration.slice(0, 6)"
           :key="item.id"
-          :style="{ background: String(item.gradient) }"
           @click="create(String(item.prompt || ''))"
         >
-          <img v-if="item.image_url" :src="String(item.image_url)" alt="" loading="lazy" />
-          <span>{{ item.title }}</span>
-          <small>
-            使用这段描述
-            <AppIcon name="arrow" :size="14" />
-          </small>
+          <span
+            class="inspiration-image"
+            :style="item.image_url ? undefined : { background: String(item.gradient) }"
+          >
+            <img v-if="item.image_url" :src="String(item.image_url)" alt="" loading="lazy" />
+          </span>
+          <span class="inspiration-info">
+            <strong>{{ item.title }}</strong>
+            <small>
+              使用这段描述
+              <AppIcon name="arrow" :size="14" />
+            </small>
+          </span>
         </button>
       </div>
     </section>
@@ -136,8 +146,7 @@ function create(text = prompt.value) {
         <button
           v-for="(work, index) in showcase.bento"
           :key="work.id"
-          :class="{ 'bento-wide': Number(work.span) > 1 }"
-          :style="{ background: String(work.gradient) }"
+          :style="work.image_url ? undefined : { background: String(work.gradient) }"
           @click="selected = work"
         >
           <img
@@ -425,41 +434,42 @@ function create(text = prompt.value) {
 .home-entries > a:hover {
   transform: translateY(-3px);
 }
+.home-entries > a {
+  --entry: #087e52;
+  background: color-mix(in srgb, var(--entry) 3%, var(--surface));
+}
+.home-entries > .entry-1 {
+  --entry: #15abe3;
+}
+.home-entries > .entry-2 {
+  --entry: #ff5058;
+}
+.home-entries > .entry-3 {
+  --entry: #efae05;
+}
 .entry-icon {
-  background: var(--tone-sage-soft);
-  color: var(--tone-sage);
-  width: 47px;
-  height: 47px;
+  background: var(--entry);
+  color: #fff;
+  width: 48px;
+  height: 48px;
   display: grid;
   place-items: center;
-  border-radius: 12px;
+  border-radius: 13px;
   flex-shrink: 0;
 }
-.entry-1 .entry-icon {
-  background: var(--tone-blue-soft);
-  color: var(--tone-blue);
-}
-.entry-2 .entry-icon {
-  background: var(--tone-clay-soft);
-  color: var(--tone-clay);
-}
-.entry-3 .entry-icon {
-  background: var(--tone-sand-soft);
-  color: var(--tone-sand);
-}
 .home-entries h3 {
-  font-size: 15px;
+  font-size: 17px;
+  font-weight: 650;
   margin: 2px 0 8px;
 }
 .home-entries p {
-  font-size: 11px;
+  font-size: 13px;
 }
 .entry-arrow {
   position: absolute;
   bottom: 12px;
   right: 15px;
-  color: var(--accent);
-  opacity: 0.65;
+  color: var(--entry);
 }
 .home-section {
   margin-bottom: 44px;
@@ -469,59 +479,70 @@ function create(text = prompt.value) {
 }
 .inspiration-grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 16px;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: 12px;
 }
 .inspiration-grid button {
-  min-height: 150px;
-  border-radius: 12px;
-  position: relative;
+  display: block;
+  width: 100%;
+  padding: 0;
   overflow: hidden;
   text-align: left;
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-end;
-  align-items: flex-start;
-  padding: 20px;
-  color: #233c2d;
+  border-radius: 12px;
+  border: 1px solid color-mix(in srgb, var(--hairline) 35%, transparent);
+  background: var(--surface);
+  transition: transform 0.2s;
 }
-.inspiration-grid img {
-  position: absolute;
-  inset: 0;
+.inspiration-grid button:hover {
+  transform: translateY(-3px);
+}
+.inspiration-image {
+  display: grid;
+  aspect-ratio: 1;
+  overflow: hidden;
+  background: var(--surface-2);
+}
+.inspiration-image img {
   width: 100%;
   height: 100%;
   object-fit: cover;
+  transition: transform 0.3s;
 }
-.inspiration-grid button > span,
-.inspiration-grid button > small {
-  position: relative;
+.inspiration-grid button:hover img {
+  transform: scale(1.04);
 }
-.inspiration-grid button > span {
-  font-size: 18px;
-  font-weight: 650;
+.inspiration-info {
+  display: grid;
+  gap: 8px;
+  padding: 15px 14px 20px;
 }
-.inspiration-grid small {
+.inspiration-info strong {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--fg);
+}
+.inspiration-info small {
   display: flex;
-  gap: 10px;
+  justify-content: space-between;
   align-items: center;
-  margin-top: 8px;
-  font-size: 11px;
+  font-size: 13px;
+  color: var(--fg-3);
 }
 .bento-grid {
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  grid-auto-rows: 230px;
-  gap: 14px;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: 12px;
 }
 .bento-grid > button {
   position: relative;
+  padding: 0;
   overflow: hidden;
-  border-radius: 12px;
+  aspect-ratio: 4 / 5;
+  border-radius: 14px;
+  border: 1px solid var(--hairline);
+  background: var(--surface-2);
   text-align: left;
   color: #2c4938;
-}
-.bento-grid .bento-wide {
-  grid-column: span 2;
 }
 .bento-grid img {
   width: 100%;
@@ -542,8 +563,8 @@ function create(text = prompt.value) {
 }
 .placeholder-art {
   position: absolute;
-  height: 150px;
-  width: 130px;
+  height: 110px;
+  width: 86px;
   border: 1px solid #ffffff65;
   border-radius: 60% 60% 0 0;
   right: 13%;
@@ -553,9 +574,10 @@ function create(text = prompt.value) {
 }
 .work-label {
   position: absolute;
-  bottom: 22px;
-  left: 20px;
-  font-size: 19px;
+  bottom: 18px;
+  left: 16px;
+  right: 12px;
+  font-size: 15px;
   font-weight: 550;
 }
 .work-label small {
@@ -702,6 +724,10 @@ footer {
   opacity: 0.35;
 }
 @media (max-width: 1199px) {
+  .inspiration-grid,
+  .bento-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
   .home-entries {
     gap: 8px;
   }
@@ -770,9 +796,6 @@ footer {
   }
   .hero-copy h1 {
     font-size: 58px;
-  }
-  .bento-grid {
-    grid-auto-rows: 190px;
   }
   .link-cards {
     grid-template-columns: 1fr;
@@ -908,36 +931,23 @@ footer {
   }
   .inspiration-grid button {
     flex-shrink: 0;
-    width: 200px;
-    min-height: 125px;
-    padding: 16px;
+    width: 150px;
   }
-  .inspiration-grid button > span {
-    font-size: 16px;
+  .inspiration-info {
+    padding: 12px 12px 14px;
   }
-  .inspiration-grid small {
-    font-size: 10px;
+  .inspiration-info strong {
+    font-size: 14px;
+  }
+  .inspiration-info small {
+    font-size: 11px;
   }
   .bento-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
-    grid-auto-rows: 180px;
     gap: 10px;
-  }
-  .bento-grid .bento-wide {
-    grid-column: span 1;
-  }
-  .work-label {
-    font-size: 15px;
-    left: 14px;
-    bottom: 15px;
   }
   .work-label small {
     font-size: 9px;
-    max-width: 130px;
-  }
-  .placeholder-art {
-    height: 110px;
-    width: 80px;
   }
   .home-guide {
     margin-top: 30px;

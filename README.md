@@ -15,6 +15,7 @@
 - [技术架构](#技术架构)
 - [快速开始](#快速开始)
 - [配置第一个可用模型](#配置第一个可用模型)
+- [首页展示素材](#首页展示素材)
 - [自定义 HTTP 协议](#自定义-http-协议)
 - [开放 API](#开放-api)
 - [数据与计费](#数据与计费)
@@ -42,7 +43,7 @@
 
 ## 界面预览
 
-> 下面的截图来自本地新建的演示库：示例渠道和模型默认都是关闭的，所以统计数字为 0，模型列表为空。
+> 下面的截图来自本地新建的演示库：示例渠道和模型默认都是关闭的，所以统计数字为 0，模型列表为空。首页的图片是项目自带的默认展示素材（见[首页展示素材](#首页展示素材)）。
 
 ### 前台
 
@@ -50,9 +51,13 @@
 |---|---|
 | ![首页](docs/images/home.jpg) | ![首页深色](docs/images/home-dark.jpg) |
 
-| 首页：灵感推荐与作品精选 | 手机端（390×844） |
+**首页：入口卡片、灵感推荐、作品精选**
+
+![首页内容区](docs/images/home-sections.jpg)
+
+| 首页内容区（深色） | 手机端（390×844） |
 |---|---|
-| ![首页内容区](docs/images/home-sections.jpg) | <img src="docs/images/home-mobile.jpg" width="300" alt="手机端首页"> |
+| ![首页内容区深色](docs/images/home-dark-sections.jpg) | <img src="docs/images/home-mobile.jpg" width="300" alt="手机端首页"> |
 
 **创作工作台**：左侧选类型、模型、尺寸和参考图，中间写描述并查看结果，右侧是创作记录。
 
@@ -237,6 +242,35 @@ flowchart LR
 
 ---
 
+## 首页展示素材
+
+首页的主视觉大图、6 张「灵感推荐」和 6 张「作品精选」，都用 Codex CLI 的图片生成功能原创生成，没有使用参考站的任何图片。文件放在 `apps/web/public/showcase/`，构建后以 `/showcase/*.jpg` 提供：
+
+| 位置 | 文件 | 内容 |
+|---|---|---|
+| 首页主视觉 | `hero.jpg` | 树林里拿胶片相机的女孩 |
+| 灵感推荐 | `insp-game.jpg` / `insp-festival.jpg` / `insp-magazine.jpg` / `insp-movie.jpg` / `insp-street.jpg` / `insp-product.jpg` | 游戏插画、节日海报、杂志封面、电影海报、城市街拍、产品广告 |
+| 作品精选 | `work-1.jpg` … `work-6.jpg` | 云端浮岛、午后散步、霓虹少女、鹤舞荷塘、晨光静物、极光海岸 |
+
+![灵感推荐与作品精选](docs/images/home-sections.jpg)
+
+- **新站点**：`db:seed` 会直接写入这些素材和对应的提示词。点击灵感卡片会带着提示词进入创作页，点击作品会弹出大图和提示词。
+- **已有站点**：执行下面的命令补图。它只替换还是初始占位、也没有图片的记录（旧的「创作留白」和「自然光影 / 几何构成 / 静物叙事」），首页主视觉为空时才设置。管理员改过的内容不会被覆盖，重复执行也不会有变化。
+
+```bash
+corepack pnpm db:showcase
+```
+
+Docker 部署时在容器里执行：
+
+```bash
+docker compose exec -T app node apps/server/dist/db-cli.js showcase
+```
+
+- **换成自己的图**：在后台「站点配置」改首页主视觉，在「作品与灵感」里上传图片、改标题和提示词。删掉主视觉图片后，首页会恢复成浅绿色的几何图形背景。
+
+---
+
 ## 自定义 HTTP 协议
 
 不在内置协议里的服务商，可以把渠道协议选成 `custom-http`，在渠道的高级配置里描述请求和响应的格式，不用改代码。
@@ -340,7 +374,7 @@ corepack pnpm test
 corepack pnpm test:e2e
 ```
 
-- `test`：17 项集成测试，在临时数据库里验证网关、认证、计费、退款和重启恢复。
+- `test`：18 项测试，在临时数据库里验证网关、认证、计费、退款、重启恢复，以及首页素材补图不会覆盖管理员内容。
 - `test:e2e`：启动独立的临时应用和模拟上游，用真实 HTTP 请求跑通「注册 → 兑换 → 生成 → 查看流水」、管理后台增删改查，以及 OpenAI SDK 调用。
 - 测试数据和正式数据库完全隔离。浏览器交互、手机端和深色模式的检查记录见 [docs/ACCEPTANCE.md](docs/ACCEPTANCE.md)。
 
@@ -402,10 +436,11 @@ docker compose exec -T app node scripts/backup.mjs
 │   │   │   ├── router/         # 路由与登录 / 管理员守卫
 │   │   │   ├── stores/         # Pinia：站点、主题、登录状态
 │   │   │   └── api/            # 请求封装
+│   │   ├── public/showcase/    # 首页默认展示图片
 │   │   └── e2e/                # Playwright HTTP 端到端测试
 │   └── server/                 # Fastify 后端
 │       ├── src/
-│       │   ├── db/             # schema、迁移、种子数据、命令行
+│       │   ├── db/             # schema、迁移、种子数据、首页默认素材（showcase.ts）、命令行
 │       │   ├── routes/         # public、auth、user、admin、v1
 │       │   └── services/       # gateway（适配器与调度）、billing、storage、security
 │       └── test/               # 集成测试与模拟上游
@@ -444,6 +479,6 @@ docker compose exec -T app node scripts/backup.mjs
 
 **本次检查中发现的界面问题**（未修复）：
 
-- 首页大标题右下方的装饰文字「A SPACE FOR YOUR IDEAS」被输入框挡住了一半（浅色和深色都有）。
+- 首页没有设置主视觉图片时，几何背景里的装饰文字「A SPACE FOR YOUR IDEAS」会被输入框挡住一半。默认素材里已经有主视觉图片，只有管理员删掉图片后才会出现。
 - 后台「模型管理」列表的「积分价格」一列直接显示 JSON 原文（如 `{"default":8,"1K":8,"2K":12}`），可读性差。
 - 后台侧栏最后一项「管理员 API Key」在 900px 高的窗口里被底部的「返回前台」挡住一部分，需要滚动才能看全。

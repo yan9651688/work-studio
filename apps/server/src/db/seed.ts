@@ -1,6 +1,7 @@
 import argon2 from 'argon2';
 import type { Config } from '../config.js';
 import { type DB, uid, now } from './index.js';
+import { HERO_IMAGE, inspirations, works } from './showcase.js';
 
 export async function seed(db: DB, config: Config) {
   if (!db.sql.prepare('SELECT id FROM users WHERE role=?').get('admin')) {
@@ -46,7 +47,7 @@ export async function seed(db: DB, config: Config) {
         title: '让灵感，\n成为作品。',
         subtitle: '从一个想法开始，探索属于你的创作方式。',
         placeholder: '描述你想创作的画面…',
-        image: '',
+        image: HERO_IMAGE,
       },
       footer: '每一个想法，都值得被看见。',
       seo: { description: '图片、视频与文本，一站式 AI 创作工作台。' },
@@ -102,50 +103,7 @@ export async function seed(db: DB, config: Config) {
         },
         `example-${type}-${i + 1}`,
       );
-    const palettes = [
-      'linear-gradient(135deg,#c6daca,#6a8f78)',
-      'linear-gradient(135deg,#d8e6ef,#789eb7)',
-      'linear-gradient(135deg,#efdbc9,#be8c6a)',
-      'linear-gradient(135deg,#e7dfca,#b3a06d)',
-      'linear-gradient(135deg,#ddd9e9,#9a92b4)',
-      'linear-gradient(135deg,#dae6df,#91b7a1)',
-    ];
-    for (let i = 0; i < 6; i++)
-      db.put(
-        'showcase',
-        {
-          kind: 'bento',
-          title: `创作留白 ${String(i + 1).padStart(2, '0')}`,
-          subtitle: '这里等待你的下一件作品',
-          prompt: '',
-          image_url: '',
-          gradient: palettes[i],
-          span: [2, 1, 1, 1, 1, 2][i],
-          weight: 6 - i,
-          enabled: true,
-        },
-        `showcase-${i}`,
-      );
-    for (const [i, title] of ['自然光影', '几何构成', '静物叙事'].entries())
-      db.put(
-        'showcase',
-        {
-          kind: 'inspiration',
-          title,
-          subtitle: '从一个方向出发',
-          prompt: [
-            '清晨的植物与窗边光影，安静的绿色调',
-            '由圆形与方形组成的极简几何构图，柔和的纸张质感',
-            '一只陶瓷杯与一本打开的书，午后的暖色光线',
-          ][i],
-          image_url: '',
-          gradient: palettes[i],
-          span: 1,
-          weight: 3 - i,
-          enabled: true,
-        },
-        `inspiration-${i}`,
-      );
+    for (const { id, ...item } of [...works, ...inspirations]) db.put('showcase', item, id);
     for (const [i, label] of ['图片创作', '视频创作', '文本创作', '应用中心'].entries())
       db.put(
         'home-entries',

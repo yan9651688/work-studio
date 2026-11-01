@@ -8,7 +8,8 @@
     "build": "tsup",
     "typecheck": "tsc -p tsconfig.json",
     "db:migrate": "tsx --env-file-if-exists=../../.env src/db/cli.ts migrate",
-    "db:seed": "tsx --env-file-if-exists=../../.env src/db/cli.ts seed"
+    "db:seed": "tsx --env-file-if-exists=../../.env src/db/cli.ts seed",
+    "db:showcase": "tsx --env-file-if-exists=../../.env src/db/cli.ts showcase"
   },
   "dependencies": {
     "@fastify/cookie": "^11.0.0",

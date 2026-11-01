@@ -1,8 +1,10 @@
 import { config } from '../config.js';
 import { openDb } from './index.js';
 import { seed } from './seed.js';
+import { fillShowcase } from './showcase.js';
 const cfg = config();
 const db = openDb(cfg.dataDir);
 if (process.argv[2] === 'seed') await seed(db, cfg);
+if (process.argv[2] === 'showcase') console.log(`Showcase: ${fillShowcase(db)} 项已更新`);
 db.sql.close();
 console.log('Database ready.');
