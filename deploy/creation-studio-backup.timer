@@ -1,0 +1,10 @@
+[Unit]
+Description=Daily Creation Studio database backup
+
+[Timer]
+OnCalendar=*-*-* 03:17:00 UTC
+Persistent=true
+Unit=creation-studio-backup.service
+
+[Install]
+WantedBy=timers.target

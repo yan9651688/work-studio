@@ -1,0 +1,34 @@
+{
+  "name": "@studio/server",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "tsx watch --env-file-if-exists=../../.env src/index.ts",
+    "build": "tsup",
+    "typecheck": "tsc -p tsconfig.json",
+    "db:migrate": "tsx --env-file-if-exists=../../.env src/db/cli.ts migrate",
+    "db:seed": "tsx --env-file-if-exists=../../.env src/db/cli.ts seed"
+  },
+  "dependencies": {
+    "@fastify/cookie": "^11.0.0",
+    "@fastify/multipart": "^9.2.0",
+    "@fastify/rate-limit": "^10.3.0",
+    "@fastify/static": "^8.3.0",
+    "@studio/shared": "workspace:*",
+    "argon2": "^0.44.0",
+    "better-sqlite3": "^12.4.0",
+    "drizzle-orm": "^0.44.0",
+    "fastify": "^5.6.0",
+    "re2-wasm": "^1.0.2",
+    "sharp": "^0.34.0",
+    "undici": "^7.16.0",
+    "zod": "^3.25.0"
+  },
+  "devDependencies": {
+    "@types/better-sqlite3": "^7.6.0",
+    "drizzle-kit": "^0.31.0",
+    "tsup": "^8.5.0",
+    "tsx": "^4.20.0"
+  }
+}

@@ -1,0 +1,43 @@
+export const statusLabels: Record<string, string> = {
+  active: '正常',
+  banned: '已停用',
+  pending: '待确认',
+  paid: '已到账',
+  cancelled: '已取消',
+  queued: '排队中',
+  running: '生成中',
+  succeeded: '已完成',
+  refunded: '已退款',
+  failed: '失败',
+};
+export const typeLabels: Record<string, string> = { image: '图片', video: '视频', text: '文本' };
+export const healthLabels: Record<string, string> = {
+  healthy: '正常',
+  busy: '繁忙',
+  error: '异常',
+  unknown: '暂无数据',
+};
+export const columnLabels: Record<string, string> = {
+  created_at: '创建时间',
+  user_id: '用户',
+  status: '状态',
+  model_id: '模型',
+  channel_id: '渠道',
+  delta: '变动',
+  balance_after: '余额',
+  reason: '原因',
+  prompt: '提示词',
+  cost_credits: '积分',
+  latency_ms: '耗时(ms)',
+  status_code: '状态码',
+  route: '接口',
+  amount_cents: '金额(分)',
+  credits: '积分',
+  code: '兑换码',
+  batch: '批次',
+  used_by: '使用者',
+  expires_at: '过期时间',
+  admin_id: '操作人',
+  action: '动作',
+  target: '对象',
+};

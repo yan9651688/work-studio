@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <meta name="description" content="AI 图片、视频与文本创作工作台" />
+    <title>创作工作台</title>
+    <script>
+      try {
+        const t = localStorage.getItem("studio-theme");
+        document.documentElement.classList.toggle(
+          "dark",
+          t === "dark" ||
+            ((!t || t === "system") &&
+              matchMedia("(prefers-color-scheme:dark)").matches),
+        );
+      } catch {}
+    </script>
+  </head>
+  <body>
+    <div id="app">
+      <div
+        style="
+          display: grid;
+          place-items: center;
+          min-height: 100vh;
+          font: 14px system-ui;
+        "
+      >
+        正在加载…
+      </div>
+    </div>
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>

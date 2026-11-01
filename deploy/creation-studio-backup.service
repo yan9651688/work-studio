@@ -1,0 +1,9 @@
+[Unit]
+Description=Creation Studio SQLite online backup
+After=docker.service
+Requires=docker.service
+
+[Service]
+Type=oneshot
+WorkingDirectory=/opt/creation-studio
+ExecStart=/usr/bin/docker compose exec -T app node scripts/backup.mjs
